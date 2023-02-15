@@ -15,15 +15,17 @@ class Population implements Serializable {
    private Gender gender;
    private String phone;
    private String address;
+   private String bloodGroup;
 
   // constructor
-public Population(String name, int age, Gender gender,String phone,String address) 
+public Population(String name, int age, Gender gender,String phone,String address,String bloodGroup) 
 {
     this.name = name;
     this.age = age;
     this.gender = gender;
     this.phone = phone;
     this.address = address;
+    this.bloodGroup= bloodGroup;
   }
 
   // getters
@@ -47,6 +49,10 @@ public Population(String name, int age, Gender gender,String phone,String addres
   {
     return address;
   }
+  public String getBloodGroup()
+  {
+    return bloodGroup;
+  }
 
 
 public void add(Population populations) {
@@ -59,6 +65,7 @@ class PopulationGUI extends JFrame implements ActionListener {
    private JTextField ageField;
    private JTextField phoneField;
    private JTextField addressField;
+   private JTextField bloodGroupField;
    private JRadioButton maleButton;
    private JRadioButton femaleButton;
    private JButton saveButton;
@@ -73,6 +80,7 @@ public PopulationGUI() {
     ageField = new JTextField(10);
     phoneField = new JTextField(10);
     addressField = new JTextField(10);
+    bloodGroupField = new JTextField(5);
     maleButton = new JRadioButton("Male");
     femaleButton = new JRadioButton("Female");
     saveButton = new JButton("Save");
@@ -82,6 +90,7 @@ public PopulationGUI() {
     ButtonGroup genderGroup = new ButtonGroup();
     genderGroup.add(maleButton);
     genderGroup.add(femaleButton);
+    
 
     // create panel for input fields
     JPanel inputPanel = new JPanel();
@@ -93,8 +102,11 @@ public PopulationGUI() {
     inputPanel.add(phoneField);
     inputPanel.add(new JLabel("Address:"));
     inputPanel.add(addressField);
+    inputPanel.add(new JLabel("Blood Group:"));
+    inputPanel.add(bloodGroupField);
     inputPanel.add(maleButton);
     inputPanel.add(femaleButton);
+   
 
     // create panel for buttons
     JPanel buttonPanel = new JPanel();
@@ -123,10 +135,12 @@ public PopulationGUI() {
       int age = Integer.parseInt(ageField.getText());
       String phone = phoneField.getText();
       String address = addressField.getText();
+      String bloodGroup = bloodGroupField.getText();
       Gender gender = maleButton.isSelected() ? Gender.MALE : Gender.FEMALE;
+      
 
       // create new population object
-      Population population = new Population(name, age, gender,phone, address);
+      Population population = new Population(name, age, gender,phone, address,bloodGroup);
         // add population to array list
       populations.add(population);
 
@@ -135,6 +149,7 @@ public PopulationGUI() {
       ageField.setText("");
       phoneField.setText("");
       addressField.setText("");
+     bloodGroupField.setText("");
       maleButton.setSelected(false);
       femaleButton.setSelected(false);
    }
@@ -165,18 +180,19 @@ public PopulationGUI() {
    }
 
   // create data for JTable
-    String[][] data = new String[populations.size()][5];
+    String[][] data = new String[populations.size()][6];
     for (int i = 0; i < populations.size(); i++) {
        Population p = populations.get(i);
        data[i][0] = p.getName();
-       data[i][1] = p.getPhone();
-       data[i][2] = p.getAddress();
-       data[i][3] = Integer.toString(p.getAge());
-       data[i][4] = p.getGender() == Gender.MALE ? "Male" : "Female";
+       data[i][1] = Integer.toString(p.getAge());
+       data[i][2] = p.getGender() == Gender.MALE ? "Male" : "Female";
+       data[i][3] = p.getPhone();
+       data[i][4] = p.getAddress();
+       data[i][5] = p.getBloodGroup();
     }
 
   // create column names for JTable
-    String[] columnNames = { "Name", "Age", "Gender","Phone","Address"};
+    String[] columnNames = { "Name", "Age", "Gender","Phone","Address","Blood Group"};
 
   // create JTable with data and column names
     JTable table = new JTable(data, columnNames);
