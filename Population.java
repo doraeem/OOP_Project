@@ -13,13 +13,17 @@ class Population implements Serializable {
    private String name;
    private int age;
    private Gender gender;
+   private String phone;
+   private String address;
 
   // constructor
-public Population(String name, int age, Gender gender) 
+public Population(String name, int age, Gender gender,String phone,String address) 
 {
     this.name = name;
     this.age = age;
     this.gender = gender;
+    this.phone = phone;
+    this.address = address;
   }
 
   // getters
@@ -35,8 +39,17 @@ public Population(String name, int age, Gender gender)
   { 
     return gender;
   }
+  public String getPhone()
+  {
+    return phone;
+  }
+  public String getAddress()
+  {
+    return address;
+  }
 
-public void add(Population population) {
+
+public void add(Population populations) {
 }
 }
 
@@ -44,17 +57,22 @@ public void add(Population population) {
 class PopulationGUI extends JFrame implements ActionListener {
    private JTextField nameField;
    private JTextField ageField;
+   private JTextField phoneField;
+   private JTextField addressField;
    private JRadioButton maleButton;
    private JRadioButton femaleButton;
    private JButton saveButton;
    private JButton viewButton;
-   private ArrayList<Population> population;
+   private ArrayList<Population> populations;
+  
 
   // constructor
 public PopulationGUI() {
     // create GUI components
-    nameField = new JTextField(20);
-    ageField = new JTextField(20);
+    nameField = new JTextField(10);
+    ageField = new JTextField(10);
+    phoneField = new JTextField(10);
+    addressField = new JTextField(10);
     maleButton = new JRadioButton("Male");
     femaleButton = new JRadioButton("Female");
     saveButton = new JButton("Save");
@@ -71,6 +89,10 @@ public PopulationGUI() {
     inputPanel.add(nameField);
     inputPanel.add(new JLabel("Age:"));
     inputPanel.add(ageField);
+    inputPanel.add(new JLabel("Phone:"));
+    inputPanel.add(phoneField);
+    inputPanel.add(new JLabel("Address:"));
+    inputPanel.add(addressField);
     inputPanel.add(maleButton);
     inputPanel.add(femaleButton);
 
@@ -89,7 +111,7 @@ public PopulationGUI() {
     viewButton.addActionListener(this);
 
     // initialize array list for population
-    population = new ArrayList<Population>();
+    populations = new ArrayList<Population>();
   }
 
   // action performed event handler
@@ -99,16 +121,20 @@ public PopulationGUI() {
       // get input fields
       String name = nameField.getText();
       int age = Integer.parseInt(ageField.getText());
+      String phone = phoneField.getText();
+      String address = addressField.getText();
       Gender gender = maleButton.isSelected() ? Gender.MALE : Gender.FEMALE;
 
       // create new population object
-      Population population = new Population(name, age, gender);
+      Population population = new Population(name, age, gender,phone, address);
         // add population to array list
-      population.add(population);
+      populations.add(population);
 
   // clear input fields
       nameField.setText("");
       ageField.setText("");
+      phoneField.setText("");
+      addressField.setText("");
       maleButton.setSelected(false);
       femaleButton.setSelected(false);
    }
@@ -118,7 +144,7 @@ public PopulationGUI() {
     try {
       FileOutputStream fileOut = new FileOutputStream("population.ser");
       ObjectOutputStream out = new ObjectOutputStream(fileOut);
-      out.writeObject(population);
+      out.writeObject(populations);
       out.close();
       fileOut.close();
    } catch (IOException e) {
@@ -129,7 +155,7 @@ public PopulationGUI() {
    try {
      FileInputStream fileIn = new FileInputStream("population.ser");
      ObjectInputStream in = new ObjectInputStream(fileIn);
-     population = (ArrayList<Population>) in.readObject();
+     populations = (ArrayList<Population>) in.readObject();
      in.close();
      fileIn.close();
    } catch (IOException e) {
@@ -139,16 +165,18 @@ public PopulationGUI() {
    }
 
   // create data for JTable
-    String[][] data = new String[population.size()][3];
-    for (int i = 0; i < population.size(); i++) {
-       Population p = population.get(i);
+    String[][] data = new String[populations.size()][5];
+    for (int i = 0; i < populations.size(); i++) {
+       Population p = populations.get(i);
        data[i][0] = p.getName();
-       data[i][1] = Integer.toString(p.getAge());
-       data[i][2] = p.getGender() == Gender.MALE ? "Male" : "Female";
+       data[i][1] = p.getPhone();
+       data[i][2] = p.getAddress();
+       data[i][3] = Integer.toString(p.getAge());
+       data[i][4] = p.getGender() == Gender.MALE ? "Male" : "Female";
     }
 
   // create column names for JTable
-    String[] columnNames = { "Name", "Age", "Gender" };
+    String[] columnNames = { "Name", "Age", "Gender","Phone","Address"};
 
   // create JTable with data and column names
     JTable table = new JTable(data, columnNames);
@@ -165,7 +193,7 @@ public PopulationGUI() {
 public static void main(String[] args) {
     PopulationGUI gui = new PopulationGUI();
     gui.setTitle("Census Paper");
-    gui.setSize(400, 300);
+    gui.setSize(600, 500);
     gui.setLocationRelativeTo(null);
     gui.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     gui.setVisible(true);
